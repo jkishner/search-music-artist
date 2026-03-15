@@ -1,0 +1,10 @@
+{
+    "id": "search-music-artist",
+    "name": "Search Music Artist",
+    "version": "1.0",
+    "minAppVersion": "0.1.0",
+    "description": "Fetches musical artist data and creates an Obsidian note.",
+    "author": "Jeffrey Kishner",
+    "authorUrl": "https://github.com/jkishner/search-music-artist",
+    "isDesktopOnly": false
+}
