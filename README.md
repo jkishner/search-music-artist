@@ -1,65 +1,183 @@
-# Spotify Artist Lookup Plugin for Obsidian
+# Search Music Artist (Obsidian Plugin)
 
-## Overview
-The **Spotify Artist Lookup Plugin** allows Obsidian users to fetch artist data from Spotify and automatically create a structured note with relevant metadata, including genres, Spotify links, and images. 
+Create an Obsidian note for a musical artist by pulling data from
+multiple music and knowledge APIs.
 
-## Features
-- 🔍 **Search for any artist** from the command palette.
-- 📄 **Creates a structured note** with:
-  - Genres (listed properly in YAML frontmatter)
-  - Spotify, Chosic, and EveryNoise profile links
-  - Artist image
-- 📂 **Custom save location**: Users can specify a folder where artist notes should be saved.
+The plugin fetches artist metadata, genres, images, and a short
+biography, then generates a structured note with YAML frontmatter that
+can be used with Dataview or other Obsidian workflows.
 
-## Installation
-1. **Download the plugin** or clone this repository.
-2. Place the `spotify-artist-lookup` folder inside:
-   ```plaintext
-   <your-obsidian-vault>/.obsidian/plugins/
-   ```
-3. Restart Obsidian.
-4. Go to **Settings → Community Plugins** and enable "Spotify Artist Lookup."
+This plugin is designed especially for users who organize **artist pages
+inside an Obsidian vault**.
 
-## Setup Instructions
-To use this plugin, you need a **Spotify Developer Account** and an API key.
+------------------------------------------------------------------------
 
-1. Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
-2. Log in or sign up.
-3. Click **Create an App** → Give it a name and description.
-4. Copy your **Client ID** and **Client Secret** from the app settings.
-5. Open **Obsidian Settings** → "Spotify Artist Lookup" → Paste your credentials.
+# Features
 
-## How to Use
-1. Open the **Command Palette** (`Cmd + P` or `Ctrl + P`).
-2. Search for **"Search Spotify Artist"** and select it.
-3. Enter the name of an artist.
-4. The plugin will fetch the data and attempt to create a new note in your chosen folder.
+When you run **Search Music Artist**, the plugin:
 
-## Example Output
-```yaml
+1.  Prompts for an artist name\
+2.  Looks up the artist in **MusicBrainz**\
+3.  Fetches genres from MusicBrainz\
+4.  Retrieves a biography and image from **Wikipedia** (if available)\
+5.  Falls back to **Last.fm** for tags, image, or bio when needed\
+6.  Uses **Wikidata / Wikimedia Commons** as an additional image source\
+7.  Generates an **Apple Music search link** for the artist
+
+It then creates (or updates) an Obsidian note containing:
+
+-   YAML metadata
+-   artist image
+-   artist biography
+
+------------------------------------------------------------------------
+
+# Example Output
+
+Example note for an artist:
+
+``` markdown
 ---
+musicbrainzId: "f4a31f0f-08f0-4c40-9f67-8b66e8d4d0b9"
+musicbrainzUrl: "https://musicbrainz.org/artist/f4a31f0f-08f0-4c40-9f67-8b66e8d4d0b9"
+lastfmUrl: "https://www.last.fm/music/Rachel+Baiman"
+wikipediaUrl: "https://en.wikipedia.org/wiki/Rachel_Baiman"
+appleMusicSearchUrl: "https://music.apple.com/us/search?term=Rachel%20Baiman"
 genres:
-  - progressive rock
-  - symphonic rock
-spotifyUrl: https://open.spotify.com/artist/0G7KI9I5BApiXc5Sqpyil9
-everynoiseUrl: https://everynoise.com/artistprofile.cgi?id=0G7KI9I5BApiXc5Sqpyil9
-chosicUrl: https://www.chosic.com/artist/progressive-rock/0G7KI9I5BApiXc5Sqpyil9/
+  - bluegrass
+  - americana
+  - folk
 ---
 
-![image](https://i.scdn.co/image/xyz)
+![image](https://upload.wikimedia.org/...)
+
+Rachel Baiman is an American fiddler, singer, and songwriter known for her work in bluegrass and Americana music...
 ```
 
-## Handling Duplicate Files
-- **Currently, if a note with the same name already exists, the plugin will fail to create a new file.**
-- **Merging data into existing files is not yet implemented** (see roadmap).
+------------------------------------------------------------------------
 
-## Roadmap / Future Enhancements
-- [ ] Implement merging metadata into existing notes instead of creating duplicates.
-- [ ] Implement logic to append a number to duplicate filenames instead of failing.
+# Data Sources
 
-## Contributing
-Pull requests are welcome! Feel free to fork this project and submit improvements.
+This plugin combines several public APIs:
 
-## License
-This project is licensed under the **MIT License**.
+  Source                         Used For
+  ------------------------------ ----------------------------------
+  MusicBrainz                    Artist identification and genres
+  Wikipedia                      Biography and primary image
+  Wikidata / Wikimedia Commons   Image fallback
+  Last.fm                        Backup tags, image, and bio
+  Apple Music                    Search link generation
 
+------------------------------------------------------------------------
+
+# Settings
+
+The plugin has a few optional settings:
+
+### Last.fm API Key (optional)
+
+Used for:
+
+-   additional genre tags
+-   backup bio
+-   backup artist image
+
+You can obtain a free API key here:
+
+https://www.last.fm/api/account/create
+
+------------------------------------------------------------------------
+
+### Apple Storefront
+
+Used when generating Apple Music search links.
+
+Examples:
+
+    us
+    gb
+    ca
+    de
+
+Default: `us`
+
+------------------------------------------------------------------------
+
+### Save Path
+
+Optional folder where artist notes will be created.
+
+Examples:
+
+    Music/Artists
+    Artists
+    Music Library/Artists
+
+Leave blank to save in the vault root.
+
+------------------------------------------------------------------------
+
+### MusicBrainz User Agent
+
+MusicBrainz recommends including a user-agent string for API requests.
+
+Default:
+
+    ObsidianArtistLookupPlugin/1.0.0
+
+------------------------------------------------------------------------
+
+# Installation
+
+### Manual Installation
+
+1.  Download the latest release
+2.  Copy these files into your vault:
+
+```{=html}
+<!-- -->
+```
+    .obsidian/plugins/search-music-artist/
+
+Files required:
+
+    main.js
+    manifest.json
+    styles.css (optional)
+
+3.  Restart Obsidian
+4.  Enable **Search Music Artist** in **Settings → Community Plugins**
+
+------------------------------------------------------------------------
+
+# Usage
+
+Open the command palette:
+
+    Cmd/Ctrl + P
+
+Run:
+
+    Search Music Artist
+
+Enter an artist name and the plugin will generate the artist page.
+
+If a note already exists, the plugin updates it.
+
+------------------------------------------------------------------------
+
+# Notes
+
+-   Some APIs (especially Last.fm) return truncated biographies.
+-   Images are pulled from Wikipedia, Wikidata, or Last.fm depending on
+    availability.
+-   Artist matching prioritizes exact matches to avoid incorrect
+    Wikipedia pages.
+
+------------------------------------------------------------------------
+
+# Author
+
+Jeffrey Kishner, vibe-coded with ChatGPT
+
+https://github.com/jkishner
